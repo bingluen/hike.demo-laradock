@@ -1,7 +1,13 @@
 # Docs: https://caddyserver.com/docs/caddyfile
 0.0.0.0:80 {
-    root /var/www/public
-    fastcgi / php-fpm:9000 php {
+    / {
+		root /var/www/hike.demo-frontend/dist
+	}
+	/api {
+		root /var/www/hike.demo-backend/public
+	}
+
+    fastcgi /api php-fpm:9000 php {
         index index.php
     }
 
@@ -26,8 +32,8 @@
     #}
 }
 
-laradock1.demo:80 {
-    root /var/www/public
+#laradock1.demo:80 {
+#    root /var/www/public
     # Create a Webhook in git.
     #git {
 	#repo https://github.com/xxx/xxx
@@ -39,13 +45,13 @@ laradock1.demo:80 {
 
 }
 
-laradock2.demo:80 {
+#laradock2.demo:80 {
     # Create a Proxy and cors.
     #proxy domain.com
 	#cors
-}
+#}
 
-laradock3.demo:80 {
-    import authlist.conf
-    root /var/www/public
-}
+#laradock3.demo:80 {
+#    import authlist.conf
+#    root /var/www/public
+#}
