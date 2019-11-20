@@ -1,57 +1,27 @@
-# Docs: https://caddyserver.com/docs/caddyfile
-0.0.0.0:80 {
-    / {
-		root /var/www/hike.demo-frontend/dist
-	}
-	/api {
-		root /var/www/hike.demo-backend/public
-	}
+hike.bingluen.tw {
+  root /var/www/hike.demo-frontend/dist
+  rewrite {
+    to {path} {path}/ /index.php?{query}
+  }
 
-    fastcgi /api php-fpm:9000 php {
-        index index.php
-    }
+  fastcgi / php-fpm:9000 php {
+    root /var/www/hike.demo-backend/public
+    index index.php
+  }
 
-    # To handle .html extensions with laravel change ext to
-    # ext / .html
+  gzip
+  log stdout
+  errors stderr
 
-    rewrite {
-        to {path} {path}/ /index.php?{query}
-    }
-    gzip
-    browse
-    log /var/log/caddy/access.log
-    errors /var/log/caddy/error.log
-    # Uncomment to enable TLS (HTTPS)
-    # Change the first list to listen on port 443 when enabling TLS
-    #tls self_signed
+  # security
+  header / Strict-Transport-Security "max-age=31536000;"
 
-    # To use Lets encrpt tls with a DNS provider uncomment these
-    # lines and change the provider as required
-    #tls {
-    #  dns cloudflare
-    #}
+  # performance
+  cache {
+    match_path /_nuxt
+    match_header Content-Type image/jpeg application/javascript
+    default_max_age 24h
+    status_header X-Cache-Status
+  }
 }
 
-#laradock1.demo:80 {
-#    root /var/www/public
-    # Create a Webhook in git.
-    #git {
-	#repo https://github.com/xxx/xxx
-    #    path /home/xxx
-    #    #interval 60
-    #    hook  webhook laradock
-    #    hook_type   generic
-    #}
-
-}
-
-#laradock2.demo:80 {
-    # Create a Proxy and cors.
-    #proxy domain.com
-	#cors
-#}
-
-#laradock3.demo:80 {
-#    import authlist.conf
-#    root /var/www/public
-#}
